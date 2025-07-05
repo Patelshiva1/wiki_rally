@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian States Quiz & Explorer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Global font and base layout */
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, 'Noto Sans', sans-serif;
+  background-color: #f9fafb;
+  color: #1f2937;
+}
+
+/* Animations */
+.fade-in {
+  animation: fadeIn 0.4s ease-in-out both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Quiz option hover */
+.option-button {
+  transition: all 0.2s ease;
+}
+.option-button:hover {
+  background-color: #e0f2fe;
+  border-color: #38bdf8;
+  cursor: pointer;
+}
+
+/* State card hover */
+.state-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.state-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.06);
+}
+
+/* Input fields */
+.auth-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background-color: #ffffff;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+.auth-input:focus {
+  border-color: #2563eb;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+/* Buttons */
+.auth-button {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  background-color: #2563eb;
+  color: white;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s ease;
+}
+.auth-button:hover {
+  background-color: #1d4ed8;
+}
+.auth-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Result styles */
+.result-correct {
+  background-color: #ecfdf5;
+  border-color: #34d399;
+}
+.result-wrong {
+  background-color: #fef2f2;
+  border-color: #f87171;
+}
+
+/* Progress bar */
+.progress-bar {
+  transition: width 0.3s ease;
+}
+
+/* Grid responsive */
+.states-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+@media (max-width: 640px) {
+  .states-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Wikipedia link styling */
+.wikipedia-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.wikipedia-link:hover {
+  color: #1e40af;
+  text-decoration: underline;
+}
+
+.wikipedia-icon {
+  width: 1rem;
+  height: 1rem;
+  fill: currentColor;
+}
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <header class="bg-white shadow-sm border-b sticky top-0 z-10">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-lg flex items-center justify-center">
+                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-gray-900">Indian States</h1>
+                    <p class="text-xs text-gray-500">Quiz & Explorer</p>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="hidden md:flex space-x-1">
+                <button onclick="showWelcome()" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                    <span>Home</span>
+                </button>
+                <button onclick="showStateSelection()" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                    <span>Quiz</span>
+                </button>
+                <button onclick="showDiscoverPage()" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <span>Discover</span>
+                </button>
+                <button onclick="showExplorePage()" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                    </svg>
+                    <span>Explore</span>
+                </button>
+            </nav>
+
+            <div id="user-info" class="hidden">
+                <span class="text-gray-600 mr-4">Welcome, <span id="username-display"></span>!</span>
+                <button onclick="logout()" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors">
+                    Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-8">
+        <!-- Login Screen -->
+        <div id="login-screen" class="max-w-md mx-auto">
+            <div class="bg-white rounded-lg shadow-md p-8 fade-in">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Welcome!</h2>
+                    <p class="text-gray-600">Sign in to track your quiz progress and explore India</p>
+                </div>
+
+                <form id="login-form" onsubmit="handleLogin(event)">
+                    <div class="space-y-4">
+                        <div>
+                            <label for="username" class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                required
+                                class="auth-input"
+                                placeholder="Enter your username"
+                            />
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input
+                                type="email"
+                                id="email"
+                                name="email"
+                                required
+                                class="auth-input"
+                                placeholder="Enter your email"
+                            />
+                        </div>
+                        <button type="submit" class="auth-button">
+                            Sign In
+                        </button>
+                    </div>
+                </form>
+
+                <div class="mt-6 text-center">
+                    <p class="text-sm text-gray-500">
+                        Don't have an account? Just enter your details above to get started!
+                    </p>
+                </div>
+
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <button onclick="guestLogin()" class="w-full px-4 py-3 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                        Continue as Guest
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Welcome Screen -->
+        <div id="welcome-screen" class="hidden text-center py-12 fade-in">
+            <h2 class="text-4xl font-bold text-gray-800 mb-4">Explore Incredible India</h2>
+            <p class="text-xl text-gray-600 mb-8">Test your knowledge, discover rich heritage, and explore amazing places across all 28 Indian states</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto mb-8">
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Quiz Challenge</h3>
+                    <p class="text-gray-600 text-sm">Test your knowledge with quizzes on all 28 Indian states</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Discover Heritage</h3>
+                    <p class="text-gray-600 text-sm">Learn about culture, festivals, and traditions</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-lg shadow-md">
+                    <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-semibold mb-2">Explore Places</h3>
+                    <p class="text-gray-600 text-sm">Discover amazing destinations and landmarks</p>
+                </div>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                <button onclick="showStateSelection()" class="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition-colors">
+                    Start Quiz
+                </button>
+                <button onclick="showDiscoverPage()" class="bg-green-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-green-700 transition-colors">
+                    Discover States
+                </button>
+                <button onclick="showExplorePage()" class="bg-purple-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-purple-700 transition-colors">
+                    Explore Places
+                </button>
+            </div>
+            
+            <div class="mt-8 text-sm text-gray-500">
+                <p>✨ 28 states • 140+ questions • Rich cultural heritage • Amazing destinations</p>
+            </div>
+        </div>
+
+        <!-- State Selection -->
+        <div id="state-selection" class="hidden">
+            <div class="bg-white rounded-lg shadow-md p-8 fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Select a State for Quiz</h2>
+                    <button onclick="showWelcome()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors">
+                        ← Back
+                    </button>
+                </div>
+                
+                <!-- Search Bar -->
+                <div class="mb-6">
+                    <div class="relative">
+                        <input
+                            type="text"
+                            id="search-input"
+                            placeholder="Search for a state..."
+                            class="w-full px-4 py-3 pl-10 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+                            oninput="filterStates()"
+                        />
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                            </svg>
+                        </div>
+                    </div>
+                    <p id="search-results" class="mt-2 text-sm text-gray-600 hidden"></p>
+                </div>
+
+                <!-- User Stats -->
+                <div id="user-stats" class="mb-6 p-4 bg-blue-50 rounded-lg hidden">
+                    <h3 class="font-semibold text-blue-800 mb-2">Your Progress</h3>
+                    <div class="grid grid-cols-3 gap-4 text-center">
+                        <div>
+                            <div class="text-2xl font-bold text-blue-600" id="quizzes-taken">0</div>
+                            <div class="text-sm text-blue-700">Quizzes Taken</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-green-600" id="avg-score">0%</div>
+                            <div class="text-sm text-green-700">Average Score</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-bold text-purple-600" id="best-score">0%</div>
+                            <div class="text-sm text-purple-700">Best Score</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- States Grid -->
+                <div id="states-grid" class="states-grid">
+                    <!-- States will be populated by JavaScript -->
+                </div>
+                
+                <!-- Loading indicator -->
+                <div id="states-loading" class="text-center py-8">
+                    <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    <p class="mt-2 text-gray-600">Loading states...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Discover Page -->
+        <div id="discover-page" class="hidden">
+            <div class="bg-white rounded-lg shadow-md p-8 fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Discover Indian States</h2>
+                    <button onclick="showWelcome()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors">
+                        ← Back
+                    </button>
+                </div>
+                
+                <div id="discover-content" class="space-y-6">
+                    <!-- Discover content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Explore Page -->
+        <div id="explore-page" class="hidden">
+            <div class="bg-white rounded-lg shadow-md p-8 fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">Explore Amazing Places</h2>
+                    <button onclick="showWelcome()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors">
+                        ← Back
+                    </button>
+                </div>
+                
+                <div id="explore-content" class="space-y-6">
+                    <!-- Explore content will be populated by JavaScript -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden">
+            <div class="bg-white rounded-lg shadow-md p-8 fade-in">
+                <div class="flex justify-between items-center mb-6">
+                    <button onclick="showStateSelection()" class="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg transition-colors">
+                        ← Back to States
+                    </button>
+                    <div class="text-sm text-gray-600">
+                        Question <span id="current-question">1</span> of <span id="total-questions">5</span>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h2 class="text-xl font-bold mb-2">Quiz: <span id="quiz-state-name"></span></h2>
+                    <div class="w-full bg-gray-200 rounded-full h-2">
+                        <div id="progress-bar" class="bg-blue-600 h-2 rounded-full progress-bar" style="width: 20%"></div>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 id="question-text" class="text-lg font-semibold mb-4"></h3>
+                    <div id="options-container" class="space-y-3">
+                        <!-- Options will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <button id="next-button" onclick="nextQuestion()" disabled class="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                    Next Question
+                </button>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden">
+            <div class="bg-white rounded-lg shadow-md p-8 fade-in">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-4">Quiz Results</h2>
+                    <div class="text-6xl font-bold mb-2" id="score-display">
+                        <!-- Score will be populated -->
+                    </div>
+                    <div class="text-xl text-gray-600 mb-4" id="percentage-display">
+                        <!-- Percentage will be populated -->
+                    </div>
+                    <div class="text-lg">
+                        State: <span class="font-semibold" id="result-state-name"></span>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h3 class="text-xl font-semibold mb-4">Question Review</h3>
+                    <div id="answers-review" class="space-y-4">
+                        <!-- Answers review will be populated -->
+                    </div>
+                </div>
+
+                <div class="flex gap-4">
+                    <button onclick="showStateSelection()" class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Take Another Quiz
+                    </button>
+                    <button onclick="shareResults()" class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                        Share Results
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let currentState = '';
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let selectedAnswer = '';
+        let allStates = [];
+        let userStats = {
+            quizzesTaken: 0,
+            totalScore: 0,
+            bestScore: 0,
+            attempts: []
+        };
+
+        // API base URL
+        const API_URL = "https://your-backend.onrender.com"; // or HuggingFace, Railway etc.
+
+
+        // Wikipedia URLs for all Indian states
+        const WIKIPEDIA_URLS = {
+            'Andhra Pradesh': 'https://en.wikipedia.org/wiki/Andhra_Pradesh',
+            'Arunachal Pradesh': 'https://en.wikipedia.org/wiki/Arunachal_Pradesh',
+            'Assam': 'https://en.wikipedia.org/wiki/Assam',
+            'Bihar': 'https://en.wikipedia.org/wiki/Bihar',
+            'Chhattisgarh': 'https://en.wikipedia.org/wiki/Chhattisgarh',
+            'Goa': 'https://en.wikipedia.org/wiki/Goa',
+            'Gujarat': 'https://en.wikipedia.org/wiki/Gujarat',
+            'Haryana': 'https://en.wikipedia.org/wiki/Haryana',
+            'Himachal Pradesh': 'https://en.wikipedia.org/wiki/Himachal_Pradesh',
+            'Jharkhand': 'https://en.wikipedia.org/wiki/Jharkhand',
+            'Karnataka': 'https://en.wikipedia.org/wiki/Karnataka',
+            'Kerala': 'https://en.wikipedia.org/wiki/Kerala',
+            'Madhya Pradesh': 'https://en.wikipedia.org/wiki/Madhya_Pradesh',
+            'Maharashtra': 'https://en.wikipedia.org/wiki/Maharashtra',
+            'Manipur': 'https://en.wikipedia.org/wiki/Manipur',
+            'Meghalaya': 'https://en.wikipedia.org/wiki/Meghalaya',
+            'Mizoram': 'https://en.wikipedia.org/wiki/Mizoram',
+            'Nagaland': 'https://en.wikipedia.org/wiki/Nagaland',
+            'Odisha': 'https://en.wikipedia.org/wiki/Odisha',
+            'Punjab': 'https://en.wikipedia.org/wiki/Punjab,_India',
+            'Rajasthan': 'https://en.wikipedia.org/wiki/Rajasthan',
+            'Sikkim': 'https://en.wikipedia.org/wiki/Sikkim',
+            'Tamil Nadu': 'https://en.wikipedia.org/wiki/Tamil_Nadu',
+            'Telangana': 'https://en.wikipedia.org/wiki/Telangana',
+            'Tripura': 'https://en.wikipedia.org/wiki/Tripura',
+            'Uttar Pradesh': 'https://en.wikipedia.org/wiki/Uttar_Pradesh',
+            'Uttarakhand': 'https://en.wikipedia.org/wiki/Uttarakhand',
+            'West Bengal': 'https://en.wikipedia.org/wiki/West_Bengal'
+        };
+
+        // Fallback data for discover page
+        const FALLBACK_DISCOVER_DATA = {
+            states: [
+                {
+                    name: "Rajasthan",
+                    capital: "Jaipur",
+                    formation: "1956",
+                    area: "342,239 km²",
+                    population: "68.5 million",
+                    region: "west",
+                    languages: ["Hindi", "Rajasthani"],
+                    description: "India's largest state by area, known for royal heritage, desert landscapes, magnificent forts, and vibrant culture.",
+                    famousFor: ["Royal Palaces", "Thar Desert", "Folk Music", "Handicrafts", "Camel Safaris"],
+                    festivals: [
+                        { name: "Desert Festival", month: "February", significance: "Showcases the culture and traditions of Rajasthan" },
+                        { name: "Teej", month: "August", significance: "Monsoon festival celebrated by women" },
+                        { name: "Pushkar Fair", month: "November", significance: "Camel fair and religious gathering" }
+                    ]
+                },
+                {
+                    name: "Kerala",
+                    capital: "Thiruvananthapuram",
+                    formation: "1956",
+                    area: "38,852 km²",
+                    population: "33.4 million",
+                    region: "south",
+                    languages: ["Malayalam", "Tamil", "Kannada"],
+                    description: "Known as 'God's Own Country', famous for backwaters, spices, Ayurveda, and high literacy rate.",
+                    famousFor: ["Backwaters", "Spices", "Ayurveda", "Kathakali Dance", "Coconut Groves"],
+                    festivals: [
+                        { name: "Onam", month: "August/September", significance: "Harvest festival celebrating the homecoming of King Mahabali" },
+                        { name: "Thrissur Pooram", month: "April/May", significance: "Temple festival with decorated elephants and fireworks" },
+                        { name: "Theyyam", month: "October-May", significance: "Ritual art form and religious festival" }
+                    ]
+                },
+                {
+                    name: "Maharashtra",
+                    capital: "Mumbai",
+                    formation: "1960",
+                    area: "307,713 km²",
+                    population: "112.4 million",
+                    region: "west",
+                    languages: ["Marathi", "Hindi", "English"],
+                    description: "India's financial capital, home to Bollywood, and rich in Maratha history and culture.",
+                    famousFor: ["Bollywood", "Financial Hub", "Ajanta Ellora Caves", "Ganesh Festival", "Street Food"],
+                    festivals: [
+                        { name: "Ganesh Chaturthi", month: "August/September", significance: "11-day festival celebrating Lord Ganesha" },
+                        { name: "Gudi Padwa", month: "March/April", significance: "Marathi New Year celebrated with traditional decorations" },
+                        { name: "Navratri", month: "September/October", significance: "Nine-night festival with Garba and Dandiya dances" }
+                    ]
+                },
+                {
+                    name: "Tamil Nadu",
+                    capital: "Chennai",
+                    formation: "1956",
+                    area: "130,060 km²",
+                    population: "72.1 million",
+                    region: "south",
+                    languages: ["Tamil", "Telugu", "Kannada"],
+                    description: "Known for Dravidian culture, classical dance Bharatanatyam, ancient temples, and film industry.",
+                    famousFor: ["Bharatanatyam", "Dravidian Temples", "Tamil Cinema", "Classical Music", "Silk Sarees"],
+                    festivals: [
+                        { name: "Pongal", month: "January", significance: "Harvest festival celebrated for four days" },
+                        { name: "Diwali", month: "October/November", significance: "Festival of lights celebrated with oil lamps" },
+                        { name: "Navaratri", month: "September/October", significance: "Nine-night festival with classical dance performances" }
+                    ]
+                },
+                {
+                    name: "Uttar Pradesh",
+                    capital: "Lucknow",
+                    formation: "1950",
+                    area: "240,928 km²",
+                    population: "199.8 million",
+                    region: "north",
+                    languages: ["Hindi", "Urdu"],
+                    description: "India's most populous state, home to Taj Mahal, Varanasi, and rich Mughal heritage.",
+                    famousFor: ["Taj Mahal", "Varanasi", "Mughal Heritage", "Classical Music", "Chikankari"],
+                    festivals: [
+                        { name: "Kumbh Mela", month: "Every 12 years", significance: "Largest religious gathering in the world" },
+                        { name: "Diwali", month: "October/November", significance: "Festival of lights celebrated grandly" },
+                        { name: "Holi", month: "March", significance: "Festival of colors celebrating spring" }
+                    ]
+                },
+                {
+                    name: "West Bengal",
+                    capital: "Kolkata",
+                    formation: "1950",
+                    area: "88,752 km²",
+                    population: "91.3 million",
+                    region: "east",
+                    languages: ["Bengali", "Hindi", "English"],
+                    description: "Known for intellectual heritage, Durga Puja, sweets, and being the cultural capital of India.",
+                    famousFor: ["Durga Puja", "Literature", "Sweets", "Cultural Heritage", "Handloom"],
+                    festivals: [
+                        { name: "Durga Puja", month: "September/October", significance: "Grandest festival celebrating Goddess Durga" },
+                        { name: "Kali Puja", month: "October/November", significance: "Festival dedicated to Goddess Kali" },
+                        { name: "Poila Boishakh", month: "April", significance: "Bengali New Year celebrated with cultural programs" }
+                    ]
+                },
+                {
+                    name: "Gujarat",
+                    capital: "Gandhinagar",
+                    formation: "1960",
+                    area: "196,244 km²",
+                    population: "60.4 million",
+                    region: "west",
+                    languages: ["Gujarati", "Hindi"],
+                    description: "Birthplace of Mahatma Gandhi, known for business acumen, vibrant culture, and industrial development.",
+                    famousFor: ["Mahatma Gandhi", "Business Hub", "Navratri Festival", "Handicrafts", "White Revolution"],
+                    festivals: [
+                        { name: "Navratri", month: "September/October", significance: "Nine-night festival with traditional Garba and Dandiya dances" },
+                        { name: "Kite Festival", month: "January", significance: "International kite flying festival on Makar Sankranti" },
+                        { name: "Rann Utsav", month: "November-February", significance: "Cultural festival in the white desert of Kutch" }
+                    ]
+                },
+                {
+                    name: "Karnataka",
+                    capital: "Bangalore",
+                    formation: "1956",
+                    area: "191,791 km²",
+                    population: "61.1 million",
+                    region: "south",
+                    languages: ["Kannada", "Telugu", "Tamil"],
+                    description: "Known as India's Silicon Valley, rich in history, culture, and technological advancement.",
+                    famousFor: ["IT Industry", "Mysore Palace", "Coffee Plantations", "Classical Music", "Sandalwood"],
+                    festivals: [
+                        { name: "Mysore Dasara", month: "September/October", significance: "Grand 10-day festival with royal processions" },
+                        { name: "Ugadi", month: "March/April", significance: "Kannada New Year celebrated with traditional foods" },
+                        { name: "Karaga", month: "March/April", significance: "Traditional festival of the Tigala community in Bangalore" }
+                    ]
+                }
+            ]
+        };
+
+        // Fallback data for explore page
+        const FALLBACK_EXPLORE_DATA = {
+            places: [
+                // Rajasthan
+                { name: "Hawa Mahal", type: "monument", description: "Iconic palace in Jaipur known as the Palace of Winds", state: "Rajasthan" },
+                { name: "Amber Fort", type: "monument", description: "Magnificent fort palace overlooking Maota Lake", state: "Rajasthan" },
+                { name: "Udaipur City Palace", type: "monument", description: "Stunning palace complex on the banks of Lake Pichola", state: "Rajasthan" },
+                { name: "Thar Desert", type: "nature", description: "Great Indian Desert offering camel safaris and cultural experiences", state: "Rajasthan" },
+                
+                // Kerala
+                { name: "Alleppey Backwaters", type: "nature", description: "Network of canals, rivers, and lakes famous for houseboat cruises", state: "Kerala" },
+                { name: "Munnar", type: "hill_station", description: "Hill station known for tea plantations and scenic beauty", state: "Kerala" },
+                { name: "Kovalam Beach", type: "beach", description: "Famous beach destination with lighthouse and Ayurvedic treatments", state: "Kerala" },
+                
+                // Maharashtra
+                { name: "Ajanta Caves", type: "monument", description: "UNESCO World Heritage site with ancient Buddhist cave paintings", state: "Maharashtra" },
+                { name: "Ellora Caves", type: "monument", description: "UNESCO World Heritage site with Hindu, Buddhist, and Jain caves", state: "Maharashtra" },
+                { name: "Gateway of India", type: "monument", description: "Iconic monument in Mumbai overlooking the Arabian Sea", state: "Maharashtra" },
+                { name: "Lonavala", type: "hill_station", description: "Popular hill station near Mumbai and Pune", state: "Maharashtra" },
+                
+                // Tamil Nadu
+                { name: "Meenakshi Temple", type: "temple", description: "Historic Hindu temple in Madurai with stunning Dravidian architecture", state: "Tamil Nadu" },
+                { name: "Mahabalipuram", type: "monument", description: "UNESCO World Heritage site with ancient rock-cut temples", state: "Tamil Nadu" },
+                { name: "Ooty", type: "hill_station", description: "Popular hill station in the Nilgiri Hills, known as 'Queen of Hills'", state: "Tamil Nadu" },
+                { name: "Rameswaram", type: "temple", description: "Sacred island town with Ramanathaswamy Temple, one of Char Dham", state: "Tamil Nadu" },
+                
+                // Uttar Pradesh
+                { name: "Taj Mahal", type: "monument", description: "UNESCO World Heritage site and one of the Seven Wonders of the World", state: "Uttar Pradesh" },
+                { name: "Varanasi Ghats", type: "temple", description: "Sacred ghats on the Ganges, one of the oldest living cities", state: "Uttar Pradesh" },
+                { name: "Fatehpur Sikri", type: "monument", description: "UNESCO World Heritage site, former Mughal capital", state: "Uttar Pradesh" },
+                { name: "Sarnath", type: "temple", description: "Buddhist pilgrimage site where Buddha gave his first sermon", state: "Uttar Pradesh" },
+                
+                // West Bengal
+                { name: "Victoria Memorial", type: "monument", description: "Iconic marble monument in Kolkata dedicated to Queen Victoria", state: "West Bengal" },
+                { name: "Darjeeling", type: "hill_station", description: "Famous hill station known for tea gardens and Himalayan views", state: "West Bengal" },
+                { name: "Sundarbans", type: "nature", description: "UNESCO World Heritage site, largest mangrove forest and home to Royal Bengal Tigers", state: "West Bengal" },
+                { name: "Howrah Bridge", type: "monument", description: "Iconic cantilever bridge over the Hooghly River in Kolkata", state: "West Bengal" },
+                
+                // Gujarat
+                { name: "Somnath Temple", type: "temple", description: "One of the twelve Jyotirlinga shrines of Lord Shiva", state: "Gujarat" },
+                { name: "Rann of Kutch", type: "nature", description: "White salt desert famous for the Rann Utsav festival", state: "Gujarat" },
+                { name: "Sabarmati Ashram", type: "monument", description: "Mahatma Gandhi's residence and center of Indian independence movement", state: "Gujarat" },
+                { name: "Gir National Park", type: "nature", description: "Only home of Asiatic lions in the wild", state: "Gujarat" },
+                
+                // Karnataka
+                { name: "Mysore Palace", type: "monument", description: "Magnificent palace known for its Indo-Saracenic architecture", state: "Karnataka" },
+                { name: "Hampi", type: "monument", description: "UNESCO World Heritage site with ruins of the Vijayanagara Empire", state: "Karnataka" },
+                { name: "Coorg", type: "hill_station", description: "Hill station famous for coffee plantations and scenic beauty", state: "Karnataka" },
+                { name: "Bandipur National Park", type: "nature", description: "Tiger reserve and national park in the Nilgiri Hills", state: "Karnataka" }
+            ]
+        };
+
+        // Initialize the app
+        function init() {
+            checkLoginStatus();
+            loadAllStates();
+        }
+
+        // Load all states from API
+        async function loadAllStates() {
+            try {
+                const response = await fetch(`${API_BASE}/states`);
+                const data = await response.json();
+                allStates = data.states || [];
+                console.log(`Loaded ${allStates.length} states:`, allStates.map(s => s.name));
+            } catch (error) {
+                console.error('Error loading states:', error);
+                // Fallback to hardcoded list if API fails
+                allStates = [
+                    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+                    'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand',
+                    'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur',
+                    'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
+                    'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura',
+                    'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+                ].map(name => ({ name, quiz_questions: 5 }));
+            }
+        }
+
+        // Check if user is logged in
+        function checkLoginStatus() {
+            const savedUser = localStorage.getItem('currentUser');
+            const savedStats = localStorage.getItem('userStats');
+            
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                if (savedStats) {
+                    userStats = JSON.parse(savedStats);
+                }
+                showWelcome();
+                updateUserInfo();
+            } else {
+                showLogin();
+            }
+        }
+
+        // Handle login form submission
+        async function handleLogin(event) {
+    event.preventDefault();
+
+    const username = document.getElementById('username').value.trim();
+    const email = document.getElementById('email').value.trim();
+
+    if (!username || !email) {
+        alert("Please fill in both username and email.");
+        return;
+    }
+
+    try {
+        // 1. Try logging in
+        let loginResponse = await fetch(`${API_BASE}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username })
+        });
+
+        if (loginResponse.ok) {
+            const data = await loginResponse.json();
+            currentUser = {
+                id: data.user_id,
+                username: data.username,
+                email: data.email,
+                isGuest: data.is_guest,
+                loginTime: new Date().toISOString()
+            };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            showWelcome();
+            updateUserInfo();
+            return;
+        }
+
+        // 2. If login fails, try register
+        let registerResponse = await fetch(`${API_BASE}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, email, is_guest: false })
+        });
+
+        const registerData = await registerResponse.json();
+
+        if (registerResponse.ok) {
+            currentUser = {
+                id: registerData.user_id,
+                username: registerData.username,
+                email: registerData.email,
+                isGuest: registerData.is_guest,
+                loginTime: new Date().toISOString()
+            };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            showWelcome();
+            updateUserInfo();
+        } else {
+            alert(registerData.detail || "Login/Register failed.");
+        }
+    } catch (error) {
+        console.error("Login/Register error:", error);
+        alert("Something went wrong. Please try again.");
+    }
+}
+
+
+        // Guest login
+        async function guestLogin() {
+    try {
+        const response = await fetch(`${API_BASE}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: "Guest_" + Date.now(),
+                email: "guest@example.com",
+                is_guest: true
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            currentUser = {
+                id: data.user_id,
+                username: data.username,
+                email: data.email,
+                isGuest: true,
+                loginTime: new Date().toISOString()
+            };
+            localStorage.setItem('currentUser', JSON.stringify(currentUser));
+            showWelcome();
+            updateUserInfo();
+        } else {
+            alert(data.detail || "Guest login failed");
+        }
+    } catch (error) {
+        console.error("Guest login error:", error);
+        alert("Guest login failed. Please try again.");
+    }
+}
+
+
+        // Logout
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            localStorage.removeItem('userStats');
+            userStats = {
+                quizzesTaken: 0,
+                totalScore: 0,
+                bestScore: 0,
+                attempts: []
+            };
+            showLogin();
+        }
+
+        // Update user info in header
+        function updateUserInfo() {
+            if (currentUser) {
+                document.getElementById('username-display').textContent = currentUser.username;
+                document.getElementById('user-info').classList.remove('hidden');
+            } else {
+                document.getElementById('user-info').classList.add('hidden');
+            }
+        }
+
+        // Show login screen
+        function showLogin() {
+            hideAllScreens();
+            document.getElementById('login-screen').classList.remove('hidden');
+        }
+
+        // Show welcome screen
+        function showWelcome() {
+            hideAllScreens();
+            document.getElementById('welcome-screen').classList.remove('hidden');
+        }
+
+        // Show state selection screen
+        function showStateSelection() {
+            hideAllScreens();
+            document.getElementById('state-selection').classList.remove('hidden');
+            document.getElementById('search-input').value = '';
+            populateStatesGrid();
+            updateUserStats();
+        }
+
+        // Show discover page
+        async function showDiscoverPage() {
+            hideAllScreens();
+            document.getElementById('discover-page').classList.remove('hidden');
+            await loadDiscoverContent();
+        }
+
+        // Show explore page
+        async function showExplorePage() {
+            hideAllScreens();
+            document.getElementById('explore-page').classList.remove('hidden');
+            await loadExploreContent();
+        }
+
+        // Hide all screens
+        function hideAllScreens() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('state-selection').classList.add('hidden');
+            document.getElementById('discover-page').classList.add('hidden');
+            document.getElementById('explore-page').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.add('hidden');
+        }
+
+        // Update user stats display
+        function updateUserStats() {
+            if (currentUser && !currentUser.isGuest) {
+                document.getElementById('user-stats').classList.remove('hidden');
+                document.getElementById('quizzes-taken').textContent = userStats.quizzesTaken;
+                
+                const avgScore = userStats.quizzesTaken > 0 ? 
+                    Math.round(userStats.totalScore / userStats.quizzesTaken) : 0;
+                document.getElementById('avg-score').textContent = avgScore + '%';
+                document.getElementById('best-score').textContent = userStats.bestScore + '%';
+            } else {
+                document.getElementById('user-stats').classList.add('hidden');
+            }
+        }
+
+        // Populate states grid - FIXED TO SHOW ALL 28 STATES
+        function populateStatesGrid() {
+            const grid = document.getElementById('states-grid');
+            const loading = document.getElementById('states-loading');
+            
+            if (allStates.length === 0) {
+                loading.classList.remove('hidden');
+                grid.innerHTML = '';
+                return;
+            }
+            
+            loading.classList.add('hidden');
+            grid.innerHTML = '';
+            
+            console.log(`Populating grid with ${allStates.length} states`);
+            
+            allStates.forEach(state => {
+                const stateName = typeof state === 'string' ? state : state.name;
+                const stateCard = document.createElement('button');
+                stateCard.className = 'state-card p-6 bg-gradient-to-br from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 rounded-lg border border-blue-200 transition-all text-left';
+                
+                // Check if user has attempted this state
+                const attempted = userStats.attempts.find(attempt => attempt.state === stateName);
+                const attemptInfo = attempted ? 
+                    `<div class="text-sm text-blue-600 mt-2 flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                        </svg>
+                        Best: ${attempted.bestScore}%
+                    </div>` : 
+                    `<div class="text-sm text-gray-500 mt-2">Not attempted yet</div>`;
+                
+                stateCard.innerHTML = `
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h3 class="font-semibold text-lg text-gray-800 mb-1">${stateName}</h3>
+                            <div class="text-sm text-gray-600">
+                                ${typeof state === 'object' && state.quiz_questions ? state.quiz_questions : 5} questions
+                            </div>
+                            ${attemptInfo}
+                        </div>
+                        <div class="ml-4">
+                            <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                `;
+                stateCard.onclick = () => startQuiz(stateName);
+                grid.appendChild(stateCard);
+            });
+            
+            console.log(`Grid populated with ${grid.children.length} state cards`);
+        }
+
+        // Filter states based on search
+        function filterStates() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const filteredStates = allStates.filter(state => {
+                const stateName = typeof state === 'string' ? state : state.name;
+                return stateName.toLowerCase().includes(searchTerm);
+            });
+            
+            const grid = document.getElementById('states-grid');
+            grid.innerHTML = '';
+            
+            if (filteredStates.length > 0) {
+                filteredStates.forEach(state => {
+                    const stateName = typeof state === 'string' ? state : state.name;
+                    const stateCard = document.createElement('button');
+                    stateCard.className = 'state-card p-6 bg-gradient-to-br from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100 rounded-lg border border-blue-200 transition-all text-left';
+                    
+                    const attempted = userStats.attempts.find(attempt => attempt.state === stateName);
+                    const attemptInfo = attempted ? 
+                        `<div class="text-sm text-blue-600 mt-2">Best: ${attempted.bestScore}%</div>` : 
+                        `<div class="text-sm text-gray-500 mt-2">Not attempted yet</div>`;
+                    
+                    stateCard.innerHTML = `
+                        <h3 class="font-semibold text-lg text-gray-800 mb-1">${stateName}</h3>
+                        <div class="text-sm text-gray-600">${typeof state === 'object' && state.quiz_questions ? state.quiz_questions : 5} questions</div>
+                        ${attemptInfo}
+                    `;
+                    stateCard.onclick = () => startQuiz(stateName);
+                    grid.appendChild(stateCard);
+                });
+                
+                document.getElementById('search-results').textContent = 
+                    `Found ${filteredStates.length} state${filteredStates.length !== 1 ? 's' : ''} matching "${searchTerm}"`;
+                document.getElementById('search-results').classList.remove('hidden');
+            } else {
+                grid.innerHTML = `
+                    <div class="col-span-full text-center py-8">
+                        <div class="text-gray-500 mb-2">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.467-.881-6.08-2.33" />
+                            </svg>
+                        </div>
+                        <p class="text-gray-500 text-lg">No states found matching "${searchTerm}"</p>
+                        <p class="text-gray-400 text-sm mt-1">Try searching with a different term</p>
+                    </div>
+                `;
+                document.getElementById('search-results').classList.add('hidden');
+            }
+        }
+
+        // Load discover content
+        async function loadDiscoverContent() {
+            const container = document.getElementById('discover-content');
+            container.innerHTML = '<div class="text-center py-8"><div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div><p class="mt-2 text-gray-600">Loading discover content...</p></div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/discover/states`);
+                let data;
+                
+                if (response.ok) {
+                    data = await response.json();
+                } else {
+                    throw new Error('API failed');
+                }
+                
+                renderDiscoverContent(data);
+            } catch (error) {
+                console.error('Error loading discover content:', error);
+                // Use fallback data
+                renderDiscoverContent(FALLBACK_DISCOVER_DATA);
+            }
+        }
+
+        // Render discover content
+        function renderDiscoverContent(data) {
+            const container = document.getElementById('discover-content');
+            
+            // Add region filter
+            const regionFilter = `
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">Filter by Region</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="filterDiscoverByRegion('all')" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">All Regions</button>
+                        <button onclick="filterDiscoverByRegion('north')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm">North</button>
+                        <button onclick="filterDiscoverByRegion('south')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm">South</button>
+                        <button onclick="filterDiscoverByRegion('east')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm">East</button>
+                        <button onclick="filterDiscoverByRegion('west')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm">West</button>
+                        <button onclick="filterDiscoverByRegion('northeast')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm">Northeast</button>
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = regionFilter + `
+                <div id="discover-states-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    ${data.states.map(state => `
+                        <div class="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-lg border border-green-200 discover-state-card" data-region="${state.region}">
+                            <div class="flex justify-between items-start mb-3">
+                                <h3 class="text-xl font-bold text-gray-800">${state.name}</h3>
+                                <span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">${state.region}</span>
+                            </div>
+                            <div class="space-y-2 mb-4">
+                                <p class="text-sm text-gray-600"><span class="font-medium">Capital:</span> ${state.capital}</p>
+                                <p class="text-sm text-gray-600"><span class="font-medium">Formation:</span> ${state.formation}</p>
+                                <p class="text-sm text-gray-600"><span class="font-medium">Area:</span> ${state.area}</p>
+                                <p class="text-sm text-gray-600"><span class="font-medium">Population:</span> ${state.population}</p>
+                                <p class="text-sm text-gray-600"><span class="font-medium">Languages:</span> ${state.languages.join(', ')}</p>
+                            </div>
+                            <p class="text-gray-700 text-sm mb-4">${state.description}</p>
+                            <div class="space-y-3">
+                                <div class="text-sm">
+                                    <span class="font-medium text-green-700">Famous for:</span>
+                                    <div class="flex flex-wrap gap-1 mt-1">
+                                        ${state.famousFor.slice(0, 4).map(item => 
+                                            `<span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">${item}</span>`
+                                        ).join('')}
+                                    </div>
+                                </div>
+                                ${state.festivals && state.festivals.length > 0 ? `
+                                    <div class="text-sm">
+                                        <span class="font-medium text-green-700">Major Festivals:</span>
+                                        <div class="mt-1 space-y-1">
+                                            ${state.festivals.slice(0, 2).map(festival => 
+                                                `<div class="text-xs text-gray-600">
+                                                    <span class="font-medium">${festival.name}</span> (${festival.month}) - ${festival.significance}
+                                                </div>`
+                                            ).join('')}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <div class="mt-4 flex gap-2">
+                                <button onclick="startQuiz('${state.name}')" class="flex-1 bg-blue-600 text-white px-3 py-2 rounded text-sm hover:bg-blue-700 transition-colors">
+                                    Take Quiz
+                                </button>
+                                <a href="${WIKIPEDIA_URLS[state.name] || '#'}" target="_blank" class="wikipedia-link bg-green-600 text-white px-3 py-2 rounded text-sm hover:bg-green-700 transition-colors flex items-center justify-center">
+                                    <svg class="wikipedia-icon mr-1" viewBox="0 0 24 24">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                    </svg>
+                                    Wikipedia
+                                </a>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Filter discover content by region
+        function filterDiscoverByRegion(region) {
+            const cards = document.querySelectorAll('.discover-state-card');
+            const buttons = document.querySelectorAll('#discover-content button');
+            
+            // Update button styles
+            buttons.forEach(btn => {
+                if (btn.onclick && btn.onclick.toString().includes(region)) {
+                    btn.className = 'px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm';
+                } else if (btn.onclick && btn.onclick.toString().includes('filterDiscoverByRegion')) {
+                    btn.className = 'px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm';
+                }
+            });
+            
+            // Filter cards
+            cards.forEach(card => {
+                if (region === 'all' || card.dataset.region === region) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        // Load explore content
+        async function loadExploreContent() {
+            const container = document.getElementById('explore-content');
+            container.innerHTML = '<div class="text-center py-8"><div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div><p class="mt-2 text-gray-600">Loading explore content...</p></div>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/explore/places`);
+                let data;
+                
+                if (response.ok) {
+                    data = await response.json();
+                } else {
+                    throw new Error('API failed');
+                }
+                
+                renderExploreContent(data);
+            } catch (error) {
+                console.error('Error loading explore content:', error);
+                // Use fallback data
+                renderExploreContent(FALLBACK_EXPLORE_DATA);
+            }
+        }
+
+        // Render explore content
+        function renderExploreContent(data) {
+            const container = document.getElementById('explore-content');
+            
+            // Group places by state
+            const placesByState = {};
+            data.places.forEach(place => {
+                if (!placesByState[place.state]) {
+                    placesByState[place.state] = [];
+                }
+                placesByState[place.state].push(place);
+            });
+            
+            // Get place types for filtering
+            const placeTypes = [...new Set(data.places.map(place => place.type))];
+            
+            // Add place type filter
+            const typeFilter = `
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">Filter by Place Type</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="filterExploreByType('all')" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm">All Places</button>
+                        ${placeTypes.map(type => `
+                            <button onclick="filterExploreByType('${type}')" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm capitalize">${type.replace('_', ' ')}</button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = typeFilter + `
+                <div class="space-y-8">
+                    ${Object.entries(placesByState).map(([stateName, places]) => `
+                        <div class="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-lg border border-purple-200 explore-state-section">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-xl font-bold text-gray-800">${stateName}</h3>
+                                <div class="flex gap-2">
+                                    <button onclick="startQuiz('${stateName}')" class="bg-blue-600 text-white px-3 py-2 rounded text-sm hover:bg-blue-700 transition-colors">
+                                        Take Quiz
+                                    </button>
+                                    <a href="${WIKIPEDIA_URLS[stateName] || '#'}" target="_blank" class="wikipedia-link bg-purple-600 text-white px-3 py-2 rounded text-sm hover:bg-purple-700 transition-colors flex items-center">
+                                        <svg class="wikipedia-icon mr-1" viewBox="0 0 24 24">
+                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                        </svg>
+                                        Learn More
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                ${places.slice(0, 6).map(place => `
+                                    <div class="bg-white p-4 rounded-lg shadow-sm explore-place-card" data-type="${place.type}">
+                                        <div class="flex justify-between items-start mb-2">
+                                            <h4 class="font-semibold text-gray-800">${place.name}</h4>
+                                            <span class="px-2 py-1 rounded text-xs font-medium ${getPlaceTypeColor(place.type)}">${place.type.replace('_', ' ')}</span>
+                                        </div>
+                                        <p class="text-gray-600 text-sm">${place.description}</p>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            ${places.length > 6 ? `
+                                <div class="mt-4 text-center">
+                                    <button onclick="showAllPlaces('${stateName}', ${JSON.stringify(places).replace(/"/g, '&quot;')})" class="text-purple-600 hover:text-purple-800 text-sm font-medium">
+                                        View All ${places.length} Places in ${stateName} →
+                                    </button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        // Get color class for place type badge
+        function getPlaceTypeColor(type) {
+            const colors = {
+                'temple': 'bg-orange-100 text-orange-800',
+                'monument': 'bg-blue-100 text-blue-800',
+                'nature': 'bg-green-100 text-green-800',
+                'beach': 'bg-cyan-100 text-cyan-800',
+                'hill_station': 'bg-purple-100 text-purple-800'
+            };
+            return colors[type] || 'bg-gray-100 text-gray-800';
+        }
+
+        // Filter explore content by place type
+        function filterExploreByType(type) {
+            const cards = document.querySelectorAll('.explore-place-card');
+            const sections = document.querySelectorAll('.explore-state-section');
+            const buttons = document.querySelectorAll('#explore-content button');
+            
+            // Update button styles
+            buttons.forEach(btn => {
+                if (btn.onclick && btn.onclick.toString().includes(`'${type}'`)) {
+                    btn.className = 'px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors text-sm capitalize';
+                } else if (btn.onclick && btn.onclick.toString().includes('filterExploreByType')) {
+                    btn.className = 'px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors text-sm capitalize';
+                }
+            });
+            
+            // Filter cards and sections
+            sections.forEach(section => {
+                const sectionCards = section.querySelectorAll('.explore-place-card');
+                let hasVisibleCards = false;
+                
+                sectionCards.forEach(card => {
+                    if (type === 'all' || card.dataset.type === type) {
+                        card.style.display = 'block';
+                        hasVisibleCards = true;
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+                
+                // Hide section if no cards are visible
+                section.style.display = hasVisibleCards ? 'block' : 'none';
+            });
+        }
+
+        // Show all places for a state
+        function showAllPlaces(stateName, places) {
+            const placesData = typeof places === 'string' ? JSON.parse(places.replace(/&quot;/g, '"')) : places;
+            
+            const modal = document.createElement('div');
+            modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4';
+            modal.innerHTML = `
+                <div class="bg-white rounded-lg max-w-4xl w-full max-h-[80vh] overflow-y-auto">
+                    <div class="p-6">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-2xl font-bold">All Places in ${stateName}</h3>
+                            <button onclick="this.closest('.fixed').remove()" class="text-gray-500 hover:text-gray-700">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            ${placesData.map(place => `
+                                <div class="bg-gray-50 p-4 rounded-lg">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <h4 class="font-semibold text-gray-800">${place.name}</h4>
+                                        <span class="px-2 py-1 rounded text-xs font-medium ${getPlaceTypeColor(place.type)}">${place.type.replace('_', ' ')}</span>
+                                    </div>
+                                    <p class="text-gray-600 text-sm">${place.description}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div class="mt-6 flex gap-2 justify-center">
+                            <button onclick="startQuiz('${stateName}')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                                Take ${stateName} Quiz
+                            </button>
+                            <a href="${WIKIPEDIA_URLS[stateName] || '#'}" target="_blank" class="wikipedia-link bg-purple-600 text-white px-4 py-2 rounded hover:bg-purple-700 transition-colors flex items-center">
+                                <svg class="wikipedia-icon mr-1" viewBox="0 0 24 24">
+                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                                </svg>
+                                Learn More on Wikipedia
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Explore specific state
+        async function exploreState(stateName) {
+            try {
+                const response = await fetch(`${API_BASE}/explore/state/${encodeURIComponent(stateName)}`);
+                const data = await response.json();
+                
+                alert(`${stateName} has ${data.total_places} amazing places to explore! Check out the full details on Wikipedia.`);
+            } catch (error) {
+                console.error('Error exploring state:', error);
+                alert('Failed to load state details. Please try again.');
+            }
+        }
+
+        // Start quiz for selected state
+        async function startQuiz(state) {
+            currentState = state;
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            selectedAnswer = '';
+            
+            try {
+                const response = await fetch(`${API_BASE}/quiz/${encodeURIComponent(state)}`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    hideAllScreens();
+                    document.getElementById('quiz-screen').classList.remove('hidden');
+                    document.getElementById('quiz-state-name').textContent = state;
+                    document.getElementById('total-questions').textContent = data.questions.length;
+                    
+                    // Store questions globally
+                    window.currentQuizData = data;
+                    
+                    loadQuestion();
+                } else {
+                    alert(data.detail || 'Failed to load quiz');
+                }
+            } catch (error) {
+                console.error('Error starting quiz:', error);
+                alert('Failed to start quiz. Please try again.');
+            }
+        }
+
+        // Load current question
+        function loadQuestion() {
+            const questions = window.currentQuizData.questions;
+            const question = questions[currentQuestionIndex];
+            
+            document.getElementById('current-question').textContent = currentQuestionIndex + 1;
+            document.getElementById('question-text').textContent = question.question;
+            
+            // Update progress bar
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = progress + '%';
+            
+            // Load options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionButton = document.createElement('button');
+                optionButton.className = 'w-full p-4 text-left rounded-lg border transition-colors bg-gray-50 border-gray-200 hover:bg-gray-100';
+                optionButton.textContent = option;
+                optionButton.onclick = () => selectAnswer(option, optionButton);
+                optionsContainer.appendChild(optionButton);
+            });
+            
+            // Reset next button
+            selectedAnswer = '';
+            document.getElementById('next-button').disabled = true;
+            document.getElementById('next-button').textContent = 
+                currentQuestionIndex < questions.length - 1 ? 'Next Question' : 'Submit Quiz';
+        }
+
+        // Select an answer
+        function selectAnswer(answer, buttonElement) {
+            selectedAnswer = answer;
+            
+            // Update button styles
+            const allButtons = document.querySelectorAll('#options-container button');
+            allButtons.forEach(btn => {
+                btn.className = 'w-full p-4 text-left rounded-lg border transition-colors bg-gray-50 border-gray-200 hover:bg-gray-100';
+            });
+            
+            buttonElement.className = 'w-full p-4 text-left rounded-lg border transition-colors bg-blue-100 border-blue-500';
+            
+            // Enable next button
+            document.getElementById('next-button').disabled = false;
+        }
+
+        // Move to next question or finish quiz
+        function nextQuestion() {
+            if (!selectedAnswer) return;
+            
+            userAnswers.push(selectedAnswer);
+            
+            if (currentQuestionIndex < window.currentQuizData.questions.length - 1) {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else {
+                finishQuiz();
+            }
+        }
+
+        // Finish quiz and show results
+        async function finishQuiz() {
+            try {
+                const response = await fetch(`${API_BASE}/quiz/submit`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        user_id: currentUser.id,
+                        state: currentState,
+                        answers: userAnswers
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Update local user stats
+                    if (currentUser) {
+                        userStats.quizzesTaken++;
+                        userStats.totalScore += data.percentage;
+                        userStats.bestScore = Math.max(userStats.bestScore, data.percentage);
+                        
+                        // Update state-specific stats
+                        const existingAttempt = userStats.attempts.find(attempt => attempt.state === currentState);
+                        if (existingAttempt) {
+                            existingAttempt.attempts++;
+                            existingAttempt.bestScore = Math.max(existingAttempt.bestScore, data.percentage);
+                            existingAttempt.lastAttempt = new Date().toISOString();
+                        } else {
+                            userStats.attempts.push({
+                                state: currentState,
+                                attempts: 1,
+                                bestScore: data.percentage,
+                                lastAttempt: new Date().toISOString()
+                            });
+                        }
+                        
+                        localStorage.setItem('userStats', JSON.stringify(userStats));
+                    }
+                    
+                    // Store results for sharing
+                    localStorage.setItem('lastQuizResult', JSON.stringify({
+                        state: currentState,
+                        score: data.score,
+                        total: data.total,
+                        percentage: data.percentage,
+                        user: currentUser?.username || 'Guest'
+                    }));
+                    
+                    showResults(data.score, data.total, data.results);
+                } else {
+                    alert(data.detail || 'Failed to submit quiz');
+                }
+            } catch (error) {
+                console.error('Error submitting quiz:', error);
+                alert('Failed to submit quiz. Please try again.');
+            }
+        }
+
+        // Show results screen
+        function showResults(score, total, results) {
+            hideAllScreens();
+            document.getElementById('results-screen').classList.remove('hidden');
+            
+            const percentage = Math.round((score / total) * 100);
+            
+            document.getElementById('score-display').textContent = `${score}/${total}`;
+            document.getElementById('percentage-display').textContent = `${percentage}% Correct`;
+            document.getElementById('result-state-name').textContent = currentState;
+            
+            // Populate answers review
+            const reviewContainer = document.getElementById('answers-review');
+            reviewContainer.innerHTML = '';
+            
+            results.forEach((result, index) => {
+                const reviewItem = document.createElement('div');
+                reviewItem.className = `p-4 rounded-lg border ${
+                    result.is_correct ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'
+                }`;
+                
+                reviewItem.innerHTML = `
+                    <div class="font-semibold mb-2">${result.question}</div>
+                    <div class="text-sm">
+                        <div class="${result.is_correct ? 'text-green-700' : 'text-red-700'}">
+                            Your answer: ${result.user_answer}
+                        </div>
+                        ${!result.is_correct ? `
+                            <div class="text-green-700">
+                                Correct answer: ${result.correct_answer}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+                
+                reviewContainer.appendChild(reviewItem);
+            });
+        }
+
+        // Share results
+        function shareResults() {
+            const result = JSON.parse(localStorage.getItem('lastQuizResult') || '{}');
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Indian States Quiz Results',
+                    text: `${result.user} scored ${result.score}/${result.total} (${result.percentage}%) on the ${result.state} quiz!`,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                const text = `${result.user} scored ${result.score}/${result.total} (${result.percentage}%) on the ${result.state} quiz! Try it yourself: ${window.location.href}`;
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Results copied to clipboard!');
+                });
+            }
+        }
+
+        // Initialize app when page loads
+        window.onload = init;
+    </script>
+</body>
+</html>
